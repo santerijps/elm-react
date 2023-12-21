@@ -25,7 +25,7 @@ Compare the example below to [the example found in Elm's documentation](https://
 *Disclaimer: The below example is trying to mimic the exact look of Elm. In real usage, you would most likely implement it differently ;)*
 
 ```tsx
-import { Cmd, UpdateParams, useelm-react } from "@santerijps/elm-react";
+import { Udpate, View, useElm } from "@santerijps/elm-react";
 
 
 
