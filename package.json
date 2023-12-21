@@ -1,0 +1,30 @@
+{
+  "name": "@santerijps/elm-react",
+  "version": "1.0.0",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/santerijps/elm-react"
+  },
+  "description": "An attempt to introduce an Elm -like feel when developing React apps.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "exit 0"
+  },
+  "author": "Santeri Sydänmetsä",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "react": "^18.2.0"
+  }
+}
