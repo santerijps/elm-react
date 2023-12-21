@@ -33,7 +33,7 @@ import { Cmd, UpdateParams, useelm-react } from "@santerijps/elm-react";
 
 
 export default function () {
-  return useelm-react(init, update, view, undefined);
+  return useElm(init, update, view, undefined);
 }
 
 
@@ -55,7 +55,7 @@ const init = () =>
 type Msg = 'Increment' | 'Decrement'
 
 
-const update = ({ msg, model }: UpdateParams<Model, Msg>) =>
+const update = ({ msg, model }: Update<Model, Msg, undefined>) =>
   ( msg == 'Increment' ? model + 1
   : msg == 'Decrement' ? model - 1
   : model
@@ -66,11 +66,11 @@ const update = ({ msg, model }: UpdateParams<Model, Msg>) =>
 // VIEW
 
 
-const view = (model: Model, { Increment, Decrement }: Cmd<Msg>) =>
+const view = ({ cmd, model }: View<Model, Msg, undefined>) =>
   <div>
-    <button onClick={Decrement}>{'-'}</button>
+    <button onClick={cmd.Decrement}>{'-'}</button>
     <div>{model}</div>
-    <button onClick={Increment}>{'+'}</button>
+    <button onClick={cmd.Increment}>{'+'}</button>
   </div>
 
 ```

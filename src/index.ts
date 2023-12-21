@@ -55,24 +55,22 @@ export interface AfterUpdate<TModel, TMsg extends string, TProps> {
   props:  TProps;
 }
 
-export interface View<TModel, TMsg extends string, TProps, TSubs> {
+export interface View<TModel, TMsg extends string, TProps> {
   cmd:    Cmd<TMsg>;
   model:  TModel;
   props:  TProps;
-  subs:   TSubs;
 }
 
-export interface RealmConfig<TModel, TMsg extends string, TProps, TSubs> {
+export interface ElmConfig<TModel, TMsg extends string, TProps> {
   init:         (params: Init<TMsg, TProps>) => TModel;
   update:       (params: Update<TModel, TMsg, TProps>) => Maybe<TModel>;
   afterUpdate?: (params: AfterUpdate<TModel, TMsg, TProps>) => Maybe<TModel>;
-  view:         (params: View<TModel, TMsg, TProps, TSubs>) => JSX.Element;
+  view:         (params: View<TModel, TMsg, TProps>) => JSX.Element;
   props:        TProps;
-  subs:         TSubs;
 }
 
-export function useRealm<TModel, TMsg extends string, TProps, TSubs>(config: RealmConfig<TModel, TMsg, TProps, TSubs>) {
-  const {init, update, afterUpdate, view, props, subs} = config;
+export function useElm<TModel, TMsg extends string, TProps>(config: ElmConfig<TModel, TMsg, TProps>) {
+  const {init, update, afterUpdate, view, props} = config;
 
   const cmd = useMemo(() => {
     return new Proxy({} as Cmd<TMsg>, {
@@ -108,17 +106,17 @@ export function useRealm<TModel, TMsg extends string, TProps, TSubs>(config: Rea
     }
   }
 
-  return view({cmd, model, props, subs});
+  return view({cmd, model, props});
 }
 
 /**
- * An immutable list implementation to help with mutating the state when using reducers, such as `useRealm`.
- * It's too easy to mess up updating the state when using the `useReducer` hook (that `useRealm` depends on),
+ * An immutable list implementation to help with mutating the state when using reducers, such as `useElm`.
+ * It's too easy to mess up updating the state when using the `useReducer` hook (that `useElm` depends on),
  * especially when dealing with lists of objects.
  *
  * What makes this class special is that it's guaranteed that not a single method will update the object in place,
  * but will return a new immutable list instance or item.
- * This makes it an ideal use case in `realm` components.
+ * This makes it an ideal use case in `elm` components.
  * It provides some useful methods for adding, updating and removing list items.
  */
 export class ImmutableList<T> {
