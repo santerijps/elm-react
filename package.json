@@ -1,17 +1,19 @@
 {
   "name": "@santerijps/elm-react",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": {
     "type": "github",
     "url": "https://github.com/santerijps/elm-react"
   },
   "description": "An attempt to introduce an Elm -like feel when developing React apps.",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
+  "exports": {
+    ".": "./dist/index.js",
+    "./helpers": "./dist/helpers.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsup",
     "test": "exit 0"
