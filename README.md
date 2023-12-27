@@ -25,15 +25,15 @@ Compare the example below to [the example found in Elm's documentation](https://
 *Disclaimer: The below example is trying to mimic the exact look of Elm. In real usage, you would most likely implement it differently ;)*
 
 ```tsx
-import { Udpate, View, useElm } from "@santerijps/elm-react";
+import { Update, View, useElm } from "@santerijps/elm-react";
 
 
 
 // MAIN
 
 
-export default function () {
-  return useElm(init, update, view, undefined);
+export default function Counter() {
+  return useElm({ init, update, view });
 }
 
 
@@ -55,7 +55,7 @@ const init = () =>
 type Msg = 'Increment' | 'Decrement'
 
 
-const update = ({ msg, model }: Update<Model, Msg, undefined>) =>
+const update = ({ msg, model }: Update<Model, Msg>) =>
   ( msg == 'Increment' ? model + 1
   : msg == 'Decrement' ? model - 1
   : model
@@ -66,7 +66,7 @@ const update = ({ msg, model }: Update<Model, Msg, undefined>) =>
 // VIEW
 
 
-const view = ({ cmd, model }: View<Model, Msg, undefined>) =>
+const view = ({ cmd, model }: View<Model, Msg>) =>
   <div>
     <button onClick={cmd.Decrement}>{'-'}</button>
     <div>{model}</div>
@@ -74,3 +74,8 @@ const view = ({ cmd, model }: View<Model, Msg, undefined>) =>
   </div>
 
 ```
+
+## Note on using refs
+
+Use of "refs" (created by calling React's `useRef` -hook) is not recommended when developing in the Elm way.
+Refs don't fit well in the Elm architecture, as it breaks away from the standard model-update pattern.
