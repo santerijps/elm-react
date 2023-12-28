@@ -75,7 +75,101 @@ const view = ({ cmd, model }: View<Model, Msg>) =>
 
 ```
 
-## Note on using refs
+### Example: todo-app
 
-Use of "refs" (created by calling React's `useRef` -hook) is not recommended when developing in the Elm way.
-Refs don't fit well in the Elm architecture, as it breaks away from the standard model-update pattern.
+```tsx
+import {  Maybe, Update, View, useElm } from "@santerijps/elm-react";
+import { ImmutableList } from "@santerijps/elm-react/helpers";
+
+export default function Todo() {
+  return useElm({ init, update, view });
+}
+
+type Item = {
+  done: boolean;
+  text: string;
+};
+
+type Model = {
+  items: ImmutableList<Item>;
+  input: string;
+};
+
+type Msg
+  = 'UpdateInput'
+  | 'AddItem'
+  | 'MarkItemAsDone'
+  | 'RemoveItem'
+
+function init(): Model {
+  return {
+    items: new ImmutableList,
+    input: '',
+  };
+}
+
+function update({ args, model, msg }: Update<Model, Msg>): Maybe<Model> {
+  switch (msg) {
+
+    case 'UpdateInput': {
+      const [ event ] = args as [Event];
+      event.preventDefault();
+      const input = event.target as HTMLInputElement;
+      return { input: input.value };
+    }
+
+    case 'AddItem': {
+      const [ event ] = args as [Event];
+      event.preventDefault();
+      if (model.input.length > 0) {
+        return {
+          input: '',
+          items: model.items.append({text: model.input, done: false})
+        };
+      }
+      break;
+    }
+
+    case 'MarkItemAsDone': {
+      const [ index ] = args as [number];
+      return { items: model.items.updateAt(index, {done: true}) };
+    }
+
+    case 'RemoveItem': {
+      const [ index ] = args as [number];
+      return { items: model.items.removeAt(index) };
+    }
+
+  }
+}
+
+function view({ cmd, model }: View<Model, Msg>) {
+  return (
+    <main>
+      <form onSubmit={cmd.AddItem}>
+        <input type="text" placeholder="Press 'Enter' to add a new item" value={model.input} onInput={cmd.UpdateInput} />
+      </form>
+      <ul>
+        {model.items.map((item, index) => (
+          <li key={index}>
+            {item.done ? (
+              <s onClick={() => cmd.RemoveItem(index)}>{item.text}</s>
+            ) : (
+              <b onClick={() => cmd.MarkItemAsDone(index)}>{item.text}</b>
+            )}
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
+}
+```
+
+## Best practices
+
+- Don't use React's `useRef` hook in Elm components
+  - It's an anti-pattern
+  - It doesn't fit well in the Elm architecture
+- Don't mutate your model's arrays
+  - I.e. Don't do `model.myArray.push(123); return {myArray};`
+  - Use something like `ImmutableList` (imported from `@santerijps/elm-react/helpers`) to deal with updating the array
