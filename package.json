@@ -6,6 +6,7 @@
     "url": "https://github.com/santerijps/elm-react"
   },
   "description": "An attempt to introduce an Elm -like feel when developing React apps.",
+  "keywords": ["elm", "architecture", "react", "hook"],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": ["dist"],
