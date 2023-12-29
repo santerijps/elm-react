@@ -37,7 +37,7 @@ export type Cmd<TMsg extends string> = Record<TMsg, CmdFunction>;
  * The return type of the `update` function is actually `Maybe<Model>`,
  * which makes it possible for the `update` function to return partial states.
  */
-export type Maybe<T> = T | Partial<T> | undefined | void;
+export type Maybe<T> = T | Partial<T> | boolean | undefined | void;
 
 export type Init<TMsg extends string, TProps = unknown> = {
   cmd:    Cmd<TMsg>;
@@ -103,11 +103,18 @@ export function useElm<TModel, TMsg extends string, TProps  = unknown>(config: E
   }
 
   function primitiveReducer(model: TModel, {args, msg, props}: DispatchProps<TMsg, TProps>): TModel {
-    const updatedModel: TModel = update({args, cmd, model, msg, props}) as TModel;
+    const updatedModel = prevOrNext(update({args, cmd, model, msg, props}) as TModel);
     if (afterUpdate) {
-      return afterUpdate({cmd, model: updatedModel, props}) as TModel;
+      return prevOrNext(afterUpdate({cmd, model: updatedModel, props}) as TModel);
     } else {
       return updatedModel;
+    }
+    function prevOrNext(nextModel: TModel) {
+      if (typeof nextModel !== typeof initialModel) {
+        return model;
+      } else {
+        return nextModel;
+      }
     }
   }
 
