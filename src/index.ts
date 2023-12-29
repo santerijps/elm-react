@@ -6,13 +6,16 @@ import { useMemo, useReducer } from 'react';
 //
 
 
-interface DispatchProps<TMsg, TProps> {
+type CmdFunction = {
+  (...args: any[]): void;
+  curry: (...bindArgs: any[]) => (...args: any[]) => void;
+};
+
+type DispatchProps<TMsg, TProps> = {
   args:   any[];
   msg:    TMsg;
   props:  TProps;
-}
-
-type WillTriggerUpdate = void;
+};
 
 
 //
@@ -26,7 +29,7 @@ type WillTriggerUpdate = void;
  * Commands can also be called in the `update` function with caution, as to avoid an infinite loop.
  * This can be useful when dealing with`Promises`.
  */
-export type Cmd<TMsg extends string> = Record<TMsg, (...args: any[]) => WillTriggerUpdate>;
+export type Cmd<TMsg extends string> = Record<TMsg, CmdFunction>;
 
 /**
  * Similar to Elm, `Maybe<T>` represents either `T` or "nothing" (`undefined`).
@@ -74,13 +77,14 @@ export function useElm<TModel, TMsg extends string, TProps  = unknown>(config: E
   const props = config.props as TProps;
 
   const cmd = useMemo(() => {
-    return new Proxy({} as Cmd<TMsg>, {
-      get(_, prop) {
-        return (...args: any[]): WillTriggerUpdate => {
-          dispatch({ args, msg: prop.toString() as TMsg, props });
-        };
+    return new Proxy({}, {
+      get(_target, prop) {
+        const msg = prop.toString() as TMsg;
+        const cmd = (...args: any[]) => dispatch({args, msg, props});
+        cmd.curry = (...bindArgs: any[]) => (...args: any[]) => dispatch({args: [...bindArgs, ...args], msg, props});
+        return cmd;
       }
-    });
+    }) as Cmd<TMsg>;
   }, [props]);
 
   const initialModel = useMemo(() => init({cmd, props}), [props]);

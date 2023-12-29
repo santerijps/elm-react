@@ -78,8 +78,8 @@ const view = ({ cmd, model }: View<Model, Msg>) =>
 ### Example: todo-app
 
 ```tsx
-import {  Maybe, Update, View, useElm } from "@santerijps/elm-react";
-import { ImmutableList } from "@santerijps/elm-react/helpers";
+import {  Maybe, Update, View, useElm } from '@santerijps/elm-react';
+import { ImmutableList } from '@santerijps/elm-react/helpers';
 
 export default function Todo() {
   return useElm({ init, update, view });
@@ -98,8 +98,7 @@ type Model = {
 type Msg
   = 'UpdateInput'
   | 'AddItem'
-  | 'MarkItemAsDone'
-  | 'RemoveItem'
+  | 'ClickItem'
 
 function init(): Model {
   return {
@@ -124,20 +123,20 @@ function update({ args, model, msg }: Update<Model, Msg>): Maybe<Model> {
       if (model.input.length > 0) {
         return {
           input: '',
-          items: model.items.append({text: model.input, done: false})
+          items: model.items.append({text: model.input, done: false}),
         };
+      } else {
+        return undefined;
       }
-      break;
     }
 
-    case 'MarkItemAsDone': {
+    case 'ClickItem': {
       const [ index ] = args as [number];
-      return { items: model.items.updateAt(index, {done: true}) };
-    }
-
-    case 'RemoveItem': {
-      const [ index ] = args as [number];
-      return { items: model.items.removeAt(index) };
+      if (model.items.at(index).done) {
+        return { items: model.items.removeAt(index) };
+      } else {
+        return { items: model.items.updateAt(index, {done: true}) };
+      }
     }
 
   }
@@ -147,16 +146,12 @@ function view({ cmd, model }: View<Model, Msg>) {
   return (
     <main>
       <form onSubmit={cmd.AddItem}>
-        <input type="text" placeholder="Press 'Enter' to add a new item" value={model.input} onInput={cmd.UpdateInput} />
+        <input type="text" placeholder="Add new item" value={model.input} onInput={cmd.UpdateInput} />
       </form>
       <ul>
         {model.items.map((item, index) => (
-          <li key={index}>
-            {item.done ? (
-              <s onClick={() => cmd.RemoveItem(index)}>{item.text}</s>
-            ) : (
-              <b onClick={() => cmd.MarkItemAsDone(index)}>{item.text}</b>
-            )}
+          <li key={index} onClick={cmd.ClickItem.curry(index)}>
+            {item.done ? <s>{item.text}</s> : <>{item.text}</>}
           </li>
         ))}
       </ul>
