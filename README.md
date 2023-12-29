@@ -1,7 +1,7 @@
 # elm-react
 
 `elm-react` is an attempt to introduce an Elm -like feel when developing React apps.
-This is achieved with a custom hook (`useelm-react`) that utilizes React's `useReducer` to smoothly update the state when needed.
+This is achieved with a custom hook (`useElm`) that utilizes React's `useReducer` to smoothly update the state when needed.
 
 `elm-react` reintroduces some of the terminology found in Elm, so in your components you'll
 
