@@ -90,7 +90,7 @@ export class ImmutableList<T> {
 
   updateAt(index: number, partialItem: Maybe<T>) {
     if (this._array[index] instanceof Object) {
-      const newItem: T = {...this.array[index], ...partialItem};
+      const newItem: T = {...this.array[index], ...(partialItem instanceof Object ? partialItem : {})};
       return new ImmutableList(this._array.map((item, i) => i === index ? newItem : item));
     } else {
       return new ImmutableList(this._array.map((item, i) => i === index ? partialItem as T : item));
